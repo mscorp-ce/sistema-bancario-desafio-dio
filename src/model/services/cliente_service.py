@@ -1,17 +1,26 @@
 from model.repository.cliente_repository import ClienteRepository
+from model.entities.cliente import Cliente
 
 class ClienteService:
-    def __init__(self, cpf, clientes):
-        self.cpf = cpf
+    def __init__(self, cliente, clientes):
+        self.cliente = cliente
         self.clientes = clientes
 
     def consultar(self):
-         repository = ClienteRepository(self.cpf, self.clientes)
+         cpf = self.cliente.cpf
+         repository = ClienteRepository(cpf, self.clientes)
 
          cliente = repository.consultar()
-
-         if cliente:
-             raise Exception("\nJá existe cliente com esse CPF!")
              
          return cliente
-         
+
+    def garvar(self, cliente):
+
+        cliente_cadastrado = self.consultar()
+
+        if cliente_cadastrado:
+             raise Exception("\nJá existe cliente com esse CPF!")
+        
+        repository = ClienteRepository(self.cliente.cpf, self.clientes)
+
+        return repository.garvar(cliente)

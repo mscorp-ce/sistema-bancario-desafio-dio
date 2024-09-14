@@ -1,5 +1,6 @@
 from model.services.cliente_service import ClienteService
 from model.entities.cliente import Cliente
+from model.entities.conta_corrente import ContaCorrente
 
 def menu():
     opcoes = """\n
@@ -19,6 +20,22 @@ def novo_titutlar(clientes):
 
     cpf = input("Informe o CPF (somente número): ")
 
+    cliente = Cliente(nome, cpf)
+    try:
+        service = ClienteService(cliente, clientes)
+
+        if service.garvar(cliente):
+            print("\nClientes :" + str(len(clientes)))
+            print("Titular cadastrado com sucesso.")
+    
+    except Exception as erro:
+        print("Erro:" + str(erro))
+
+def nova_conta(numero_conta, clientes, contas):
+    numero_conta = len(contas) + 1
+
+    cpf = input("Informe o CPF (somente número): ")
+
     service = ClienteService(cpf, clientes)
 
     try:
@@ -27,11 +44,11 @@ def novo_titutlar(clientes):
         if cliente == None:
            cliente = Cliente(nome, cpf)
            clientes.append(cliente)
+           print("Titular cadastrado com sucesso.")
     
     except Exception as erro:
         print("Erro:" + str(erro))
 
-def nova_conta():
     print("Nova conta")
 
 def depositar():
@@ -59,7 +76,7 @@ def main():
         elif opcao == "t":
             novo_titutlar(clientes)
         elif opcao == "n":
-            nova_conta()
+            nova_conta(clientes, contas)
         elif opcao == "q":
             print("Sair")
             break  

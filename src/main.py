@@ -1,3 +1,5 @@
+from model.services.cliente_service import ClienteService
+from model.entities.cliente import Cliente
 
 def menu():
     opcoes = """\n
@@ -9,12 +11,25 @@ def menu():
     | [e] Extrato                          |
     | [q] Sair                             |
     |======================================|
-
     =>"""
     return opcoes
 
-def novo_titutlar():
-    pass
+def novo_titutlar(clientes):
+    nome = input("Informe o nome completo: ")
+
+    cpf = input("Informe o CPF (somente número): ")
+
+    service = ClienteService(cpf, clientes)
+
+    try:
+        cliente = service.consultar()
+
+        if cliente == None:
+           cliente = Cliente(nome, cpf)
+           clientes.append(cliente)
+    
+    except Exception as erro:
+        print("Erro:" + str(erro))
 
 def nova_conta():
     print("Nova conta")
@@ -29,6 +44,9 @@ def extrato():
     print("Extrato")
 
 def main():
+    clientes = []
+    contas = []
+
     while True:
         opcao = input(menu())
 
@@ -39,7 +57,7 @@ def main():
         elif opcao == "e":
             extrato()
         elif opcao == "t":
-            novo_titutlar()
+            novo_titutlar(clientes)
         elif opcao == "n":
             nova_conta()
         elif opcao == "q":

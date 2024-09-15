@@ -1,6 +1,7 @@
 from model.services.cliente_service import ClienteService
 from model.entities.cliente import Cliente
 from model.entities.conta_corrente import ContaCorrente
+from model.services.conta_corrente_service import ContaCorrenteService
 
 def menu():
     opcoes = """\n
@@ -29,27 +30,33 @@ def novo_titutlar(clientes):
             print("Titular cadastrado com sucesso.")
     
     except Exception as erro:
-        print("Erro:" + str(erro))
+        print("Erro: " + str(erro))
 
-def nova_conta(numero_conta, clientes, contas):
+def nova_conta(clientes, contas):
     numero_conta = len(contas) + 1
 
     cpf = input("Informe o CPF (somente número): ")
 
-    service = ClienteService(cpf, clientes)
+    cliente = Cliente("", cpf)
+
+    service = ClienteService(cliente, clientes)
 
     try:
         cliente = service.consultar()
 
         if cliente == None:
-           cliente = Cliente(nome, cpf)
-           clientes.append(cliente)
-           print("Titular cadastrado com sucesso.")
+            print("Titular do CPF informado não consta em nosso cadastro..")
+
+        conta = ContaCorrente(numero_conta, cliente)
+
+        conta_service = ContaCorrenteService(conta, contas)
+
+        if conta_service.garvar(conta):
+            print("Nova conta cadastrada com sucesso.")
+            print("Numero de contas: " + str(len(contas)))
     
     except Exception as erro:
-        print("Erro:" + str(erro))
-
-    print("Nova conta")
+        print("Erro:" + str(erro))    
 
 def depositar():
     print("Depositar")

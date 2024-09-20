@@ -8,6 +8,7 @@ Criação de Contas: Possibilita a abertura de novas contas para os clientes cad
 Depósitos e Saques: Realiza operações de depósito e saque nas contas.
 Consulta de Extrato: Gera um extrato das transações realizadas em uma conta.
 Consulta de Saldo: Permite verificar o saldo atual da conta.
+
 Estrutura do Código
 O sistema é dividido em várias classes e funções, organizadas para facilitar a manutenção e a compreensão:
 
@@ -65,6 +66,3 @@ Sinta-se à vontade para contribuir com melhorias, correções ou novas funciona
 
 Licença
 Este projeto está sob a licença MIT. Veja o arquivo LICENSE para mais detalhes.
-
-
-

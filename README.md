@@ -45,12 +45,17 @@ extrato(): Exibe o extrato da conta.
 saldo(): Exibe o saldo disponível na conta.
 
 Pré-requisitos
+
 Python 3.x
+
 Bibliotecas:
+
 pandas: Para manipulação de dados.
+
 tabulate: Para exibição de dados em formato tabular.
 
 Como Executar
+
 Clone o repositório:
 
 git clone https://github.com/mscorp-ce/sistema-bancario-desafio-dio.git

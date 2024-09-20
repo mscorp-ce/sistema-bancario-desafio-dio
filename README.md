@@ -63,7 +63,7 @@ pandas: Para manipulação de dados.
 
 tabulate: Para exibição de dados em formato tabular.
 
-Como Executar
+## Como Executar
 
 Clone o repositório:
 
@@ -71,22 +71,22 @@ git clone https://github.com/mscorp-ce/sistema-bancario-desafio-dio.git
 
 cd <DIRETORIO_DO_REPOSITORIO>
 
-Instale as dependências:
+## Instale as dependências:
 
 pip install pandas tabulate
 
-Execute o sistema:
+## Execute o sistema:
 
 python main.py
 
-Exemplo de Uso
+## Exemplo de Uso
 
 Ao iniciar o sistema, você verá um menu com opções. Siga as instruções na tela para cadastrar clientes, criar contas e realizar transações.
 
-Contribuições
+## Contribuições
 
 Sinta-se à vontade para contribuir com melhorias, correções ou novas funcionalidades. Faça um fork do projeto, implemente suas alterações e envie um pull request.
 
-Licença
+## Licença
 
 Este projeto está sob a licença MIT. Veja o arquivo LICENSE para mais detalhes.

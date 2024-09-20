@@ -6,17 +6,17 @@ class ClienteService:
         self.clientes = clientes
         self.repository = ClienteRepository(self.cliente, self.clientes)
 
-    def consultar(self):      
 
+    def consultar(self):      
          cliente = self.repository.consultar()
              
          return cliente
+    
 
     def garvar(self, cliente):
-
         cliente_cadastrado = self.consultar()
 
         if cliente_cadastrado:
              raise Exception("Já existe cliente com esse CPF!")
         
-        return self.repository.garvar(cliente) 
+        return self.repository.garvar(cliente)

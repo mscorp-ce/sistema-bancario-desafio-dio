@@ -31,11 +31,17 @@ Format: Responsável por adiconar a mascara de formato monetário de moéda.
 Funções:
 
 menu(): Exibe o menu principal para o usuário.
+
 novo_titutlar(): Registra um novo cliente.
+
 nova_conta(): Cria uma nova conta para um cliente.
+
 depositar(): Realiza um depósito na conta.
+
 sacar(): Realiza um saque da conta.
+
 extrato(): Exibe o extrato da conta.
+
 saldo(): Exibe o saldo disponível na conta.
 
 Pré-requisitos

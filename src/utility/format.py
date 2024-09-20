@@ -5,5 +5,5 @@ class Format:
 
     def moeda(self, valor):
         return f"R$ {valor:,.2f}".replace(',', 'v').replace('.', ',').replace('v', '.') 
-        #return valor
+        
  

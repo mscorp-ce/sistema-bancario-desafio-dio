@@ -5,6 +5,7 @@ class Movimentacoes:
     def __init__(self):
         self.transacoes = []
 
+
     def lancar_transacao(self, tid, data, tipo, valor, saldo):
         self.transacoes.append(
             {           
@@ -15,6 +16,7 @@ class Movimentacoes:
                 "saldo": saldo,
             }
         )
+
 
     def efeturar_transacao(self, conta_corrente, transacao):
         if len(self.transacoes) == 0:
@@ -34,3 +36,20 @@ class Movimentacoes:
                               transacao.valor,
                               conta_corrente.saldo
                               )
+        
+
+    def filtrar_transacoes_por_dia(self, dia=None):
+        if dia is None:
+            dia = datetime.now()
+        else:
+            dia = datetime.strptime(dia, "%d/%m/%Y")
+        
+        transacoes_no_dia = []
+        
+        for transacao in self.transacoes:
+            data_transacao = datetime.strptime(transacao["data"], "%d/%m/%Y %H:%M:%S")
+            
+            if data_transacao.date() == dia.date():
+                transacoes_no_dia.append(transacao)
+
+        return transacoes_no_dia

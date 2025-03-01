@@ -1,4 +1,3 @@
-import pandas as pd
 from tabulate import tabulate
 from datetime import datetime
 import uuid
@@ -237,18 +236,41 @@ def sacar(clientes):
         print("Saque realizado com sucesso.")
 
 
+def formatar_historico(historico, format):
+    return [
+        {
+            "data": transacao["data"],
+            "tipo": transacao["tipo"],
+            "valor": format.moeda(float(transacao["valor"])),
+            "saldo": format.moeda(float(transacao["saldo"])),
+        }
+        for transacao in historico
+    ]
+
 def extrato(clientes):
     cliente = obter_cliente(clientes)
     if cliente is None:
         return
 
     historico = cliente.contas[0].movimentacoes.transacoes
-    df = pd.DataFrame(historico)
+#    df = pd.DataFrame(historico)
 
     format = Format() 
 
-    df['valor'] = df['valor'].apply(format.moeda)
-    df['saldo'] = df['saldo'].apply(format.moeda)
+ #   df['valor'] = df['valor'].apply(format.moeda)
+ #   df['saldo'] = df['saldo'].apply(format.moeda)
+
+    historico_formatado = formatar_historico(historico, format)
+
+    '''historico_formatado = [
+        {
+            "data": transacao["data"],
+            "tipo": transacao["tipo"],
+            "valor": format.moeda(float(transacao["valor"])),  # Convertendo para float antes de formatar
+            "saldo": format.moeda(float(transacao["saldo"])),  # Convertendo para float antes de formatar
+        }
+        for transacao in historico
+    ]'''
 
     print("\nExtrato Bancário")
     print("DIO BANCK")
@@ -260,8 +282,11 @@ def extrato(clientes):
                                        str(cliente.contas[0].sequencia_extrato))))
     print("Titular: " + cliente.nome)
     print("Nº Conta: " + str(cliente.contas[0].numero))
-    print(tabulate(df, headers='keys', tablefmt='grid', showindex=False,
-                   colalign=("center", "center", "center", "right", "right")))
+
+    print(tabulate(historico_formatado, headers="keys", tablefmt="grid", showindex=False))
+
+#    print(tabulate(df, headers='keys', tablefmt='grid', showindex=False,
+#                   colalign=("center", "center", "center", "right", "right")))
 
 
 def saldo(clientes):

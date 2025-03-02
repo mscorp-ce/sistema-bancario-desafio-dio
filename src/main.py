@@ -10,6 +10,7 @@ from model.services.conta_corrente_service import ContaCorrenteService
 from model.entities.deposito import Deposito
 from model.entities.saque import Saque
 
+
 def menu():
     opcoes = """\n
     |================ MENU ================|
@@ -25,10 +26,11 @@ def menu():
 
     return opcoes
 
-def validar_CPF(cpf):
+
+def validar_cpf(cpf):
     if not cpf.isdigit():
-        return
-    
+        return None
+
     return cpf
 
 
@@ -37,31 +39,31 @@ def novo_titutlar(clientes):
 
     cpf = input("Informe o CPF (somente número): ")
 
-    cpf = validar_CPF(cpf)
+    cpf = validar_cpf(cpf)
 
-    if cpf == None:
+    if cpf is None:
         print("CPF só deve conter números")
         return
 
     cliente = Cliente(nome, cpf)
-    
+
     try:
         service = ClienteService(cliente, clientes)
 
         if service.garvar(cliente):
             print("\nNº Titular: " + str(len(clientes)))
             print("Titular cadastrado com sucesso.")
-    
+
     except Exception as erro:
         print("Erro: " + str(erro))
 
 
 def recuperar_cliente(clientes):
     cpf = input("Informe o CPF do titular: ")
- 
-    cpf = validar_CPF(cpf)
 
-    if cpf == None:
+    cpf = validar_cpf(cpf)
+
+    if cpf is None:
         raise Exception("\nCPF inválido!")
 
     cliente = Cliente("", cpf)
@@ -74,7 +76,7 @@ def recuperar_cliente(clientes):
         return cliente
 
     except Exception as erro:
-        print("Erro:" + str(erro))  
+        print("Erro:" + str(erro))
 
 
 def obter_cliente(clientes):
@@ -87,11 +89,11 @@ def obter_cliente(clientes):
         if cliente is None:
             print("O titular do cpf informado não esta cadastrado.")
             return None
-        
+
         if len(cliente.contas) == 0:
             print("Conta não cadastrada.")
             return None
-        
+
         if len(cliente.contas[0].movimentacoes.transacoes) == 0:
             print("Conta não movimentada. Faça um depósito.")
             return None
@@ -104,11 +106,11 @@ def obter_cliente(clientes):
 
 def nova_conta(clientes, contas):
     numero_conta = len(contas) + 1
-    
+
     try:
         cliente = recuperar_cliente(clientes)
 
-        if cliente == None:
+        if cliente is None:
             print("Titular do CPF informado não consta em nosso cadastro.")
             return
 
@@ -120,7 +122,7 @@ def nova_conta(clientes, contas):
             contas.append(conta_corente)
             print("Nova conta cadastrada com sucesso.")
             print("Numero de contas: " + str(len(cliente.contas)))
-    
+
     except Exception as erro:
         print("Erro:" + str(erro))
 
@@ -130,72 +132,79 @@ def operacao(clientes, tipo):
         cliente = recuperar_cliente(clientes)
     except Exception as erro:
         print("Erro:" + str(erro))
-        return
+        return None, None
 
     if not cliente:
         print("\nTitular não encontrado!")
-        return
-    
-    valor = input("Informe o valor do " + tipo + ": ")
+        return None, None
 
-    valor_aux = valor
+    valor_input = input("Informe o valor do " + tipo + ": ")
+
+    valor_aux = valor_input
 
     valor_aux = valor_aux.replace('.', '')
 
     if not valor_aux.isdigit():
         print("O valor informado é invalido, o mesmo só deve conter números e sepador casas decimais(' . ')")
         return cliente, None
-    
-    valor = float(valor)
-    
+
+    valor = float(valor_input)
+
     return cliente, valor
 
+
 def validar_transacao(clientes, tipo):
+
     if len(clientes) == 0:
         print("Não existe titular cadastrado.")
-        return
-        
-    try:
-      retorno = operacao(clientes, tipo)
+        return None
 
-      if retorno is not None:
-          cliente, valor = retorno
-      elif retorno is None:
-          return
+    try:
+        retorno = operacao(clientes, tipo)
+
+        if retorno is not None:
+            cliente, valor = retorno
+            if cliente is None:
+                return None
+        else:
+            return None
 
     except Exception as erro:
         print("Erro:" + str(erro))
-        return
+        return None
 
     if not cliente:
         print("\nTitular não encontrado!")
-        return
-    
+        return None
+
     if valor is None:
-        return
-    
+        return None
+
     if len(cliente.contas) == 0:
         print("Conta não cadastrada.")
-        return
+        return None
 
     if not cliente.contas:
-        return
-    
+        return None
+
     return cliente, valor
 
 
 def depositar(clientes):
+    cliente = None
+    valor = None
+
     try:
         retorno = validar_transacao(clientes, "depósito")
 
         if retorno is not None:
             cliente, valor = retorno
-        elif retorno is None:
+        if retorno is None or cliente is None or valor is None:
             return
     except Exception as erro:
         print("Erro:" + str(erro))
         return
-    
+
     transacao = Deposito(valor)
 
     conta_corrente = cliente.contas[0]
@@ -208,27 +217,30 @@ def depositar(clientes):
         conta_corrente.movimentacoes.efeturar_transacao(conta_corrente, transacao)
 
         print("Depósito realizado com sucesso.")
-        
+
 
 def sacar(clientes):
+    cliente = None
+    valor = None
+
     try:
         retorno = validar_transacao(clientes, "saque")
 
         if retorno is not None:
             cliente, valor = retorno
-        elif retorno is None:
+        if retorno is None or cliente is None or valor is None:
             return
     except Exception as erro:
         print("Erro:" + str(erro))
         return
-    
+
     transacao = Saque(valor)
 
     conta_corrente = cliente.contas[0]
 
     service = ContaCorrenteService(conta_corrente, cliente.contas)
 
-    transacao_sucedida = service.sacar(conta_corrente, transacao) 
+    transacao_sucedida = service.sacar(conta_corrente, transacao)
 
     if transacao_sucedida:
         conta_corrente.movimentacoes.efeturar_transacao(conta_corrente, transacao)
@@ -236,16 +248,17 @@ def sacar(clientes):
         print("Saque realizado com sucesso.")
 
 
-def formatar_historico(historico, format):
+def formatar_historico(historico, formato):
     return [
         {
             "data": transacao["data"],
             "tipo": transacao["tipo"],
-            "valor": format.moeda(float(transacao["valor"])),
-            "saldo": format.moeda(float(transacao["saldo"])),
+            "valor": formato.moeda(float(transacao["valor"])),
+            "saldo": formato.moeda(float(transacao["saldo"])),
         }
         for transacao in historico
     ]
+
 
 def extrato(clientes):
     cliente = obter_cliente(clientes)
@@ -253,40 +266,23 @@ def extrato(clientes):
         return
 
     historico = cliente.contas[0].movimentacoes.transacoes
-#    df = pd.DataFrame(historico)
 
-    format = Format() 
+    formato = Format()
 
- #   df['valor'] = df['valor'].apply(format.moeda)
- #   df['saldo'] = df['saldo'].apply(format.moeda)
-
-    historico_formatado = formatar_historico(historico, format)
-
-    '''historico_formatado = [
-        {
-            "data": transacao["data"],
-            "tipo": transacao["tipo"],
-            "valor": format.moeda(float(transacao["valor"])),  # Convertendo para float antes de formatar
-            "saldo": format.moeda(float(transacao["saldo"])),  # Convertendo para float antes de formatar
-        }
-        for transacao in historico
-    ]'''
+    historico_formatado = formatar_historico(historico, formato)
 
     print("\nExtrato Bancário")
     print("DIO BANCK")
     print("Data/Hora: " + datetime.now().strftime("%d/%m/%Y %H:%M:%S"))
 
     cliente.contas[0].sequencia_extrato += 1
-    
-    print("Extrato N. : " + str(uuid.uuid5(uuid.NAMESPACE_DNS, 
-                                       str(cliente.contas[0].sequencia_extrato))))
+
+    print("Extrato N. : " + str(uuid.uuid5(uuid.NAMESPACE_DNS,
+                                           str(cliente.contas[0].sequencia_extrato))))
     print("Titular: " + cliente.nome)
     print("Nº Conta: " + str(cliente.contas[0].numero))
 
     print(tabulate(historico_formatado, headers="keys", tablefmt="grid", showindex=False))
-
-#    print(tabulate(df, headers='keys', tablefmt='grid', showindex=False,
-#                   colalign=("center", "center", "center", "right", "right")))
 
 
 def saldo(clientes):
@@ -296,18 +292,19 @@ def saldo(clientes):
 
     historico = cliente.contas[0].movimentacoes.transacoes
     valor_saldo = sum(
-        operacao['valor'] if operacao['tipo'] == "Deposito" else -operacao['valor']
-        for operacao in historico
+        transacao['valor'] if transacao['tipo'] == "Deposito" else -transacao['valor']
+
+        for transacao in historico
     )
 
-    format = Format()
+    formato = Format()
 
-    print("Saldo disponível: " + str(format.moeda(valor_saldo)))
+    print("Saldo disponível: " + str(formato.moeda(valor_saldo)))
 
 
 def main():
     clientes = []
-    contas = []    
+    contas = []
 
     while True:
         opcao = input(menu())
@@ -326,9 +323,10 @@ def main():
             nova_conta(clientes, contas)
         elif opcao.lower() == "q":
             print("Sair")
-            break  
+            break
         else:
-            print("Opção inválida. Tente novamente.")  
+            print("Opção inválida. Tente novamente.")
+
 
 if __name__ == "__main__":
     main()
